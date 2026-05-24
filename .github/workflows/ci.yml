@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile Python
+        run: |
+          python -m py_compile \
+            fulcra_earthquake_annotation/watch.py \
+            fulcra-earthquake-annotation/scripts/usgs_earthquake_watch.py \
+            tests/test_usgs_earthquake_watch.py
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests
+
+      - name: Validate JSON files
+        run: |
+          python -m json.tool fulcra-earthquake-annotation/examples/config.schema.json >/dev/null
+          python -m json.tool fulcra-earthquake-annotation/examples/hawaii-island.config.json >/dev/null
+          python -m json.tool tests/fixtures/usgs_sample.geojson >/dev/null
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          for line in Path("tests/fixtures/expected_envelopes.jsonl").read_text().splitlines():
+              if line.strip():
+                  json.loads(line)
+          PY
+
+      - name: Verify fixture CLI output
+        run: |
+          python fulcra-earthquake-annotation/scripts/usgs_earthquake_watch.py \
+            --config fulcra-earthquake-annotation/examples/hawaii-island.config.json \
+            --from-file tests/fixtures/usgs_sample.geojson \
+            --state-file /tmp/seen-usgs-events.json \
+            --dry-run \
+            --backfill > /tmp/actual-envelopes.jsonl
+          diff -u tests/fixtures/expected_envelopes.jsonl /tmp/actual-envelopes.jsonl

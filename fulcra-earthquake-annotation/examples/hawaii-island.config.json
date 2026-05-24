@@ -1,0 +1,15 @@
+{
+  "center_lat": 19.64,
+  "center_lon": -155.99,
+  "radius_mi": 250,
+  "monitor_label": "Hawaii Island",
+  "annotation_name": "BI Earthquakes",
+  "tags": ["earthquake", "bi", "hawaii", "agent-recorded", "yumemishi"],
+  "record_min": 4.0,
+  "notify_min": 5.0,
+  "since_hours": 2.0,
+  "timezone": "Pacific/Honolulu",
+  "state_file": "~/.hermes/state/fulcra-earthquake-annotation/hawaii-island-seen-usgs-events.json",
+  "state_retention_days": 90,
+  "outputs": ["fulcra_record", "discord_alert"]
+}

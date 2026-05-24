@@ -1,0 +1,7 @@
+interface:
+  display_name: "Fulcra Earthquake Annotation"
+  short_description: "Record USGS earthquakes as Fulcra annotations"
+  default_prompt: "Use $fulcra-earthquake-annotation to set up a Fulcra earthquake monitor."
+
+policy:
+  allow_implicit_invocation: true

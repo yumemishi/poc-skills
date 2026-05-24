@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "hv74966427",
+      "properties": {
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/hv74966427",
+        "time": 1779522360000,
+        "mag": 5.96,
+        "place": "13 km S of Honaunau-Napoopoo, Hawaii",
+        "mmi": 7.2,
+        "cdi": null,
+        "tsunami": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.99, 19.382, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ci-low-mag",
+      "properties": {
+        "url": "https://example.test/low-mag",
+        "time": 1779522360000,
+        "mag": 3.1,
+        "place": "1 km S of Test Place",
+        "mmi": null,
+        "cdi": null,
+        "tsunami": null
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.99, 19.64, 0]
+      }
+    }
+  ]
+}
