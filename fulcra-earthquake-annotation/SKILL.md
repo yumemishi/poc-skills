@@ -160,7 +160,21 @@ Reply yes to use this, or write your own.
 
 Examples: `BI Earthquakes`, `Big Island Earthquakes`, `Southern California Earthquakes`, `Nearby Earthquakes`.
 
-### 4. Fulcra Recording Threshold
+### 4. Polling Frequency
+```text
+How often should I check USGS?
+
+1. Every 30 minutes
+2. Hourly — default
+3. Every 3 hours
+4. Every day
+
+Reply with a number, or write your own. You can always ask your agent to check USGS manually anytime if you need it sooner.
+```
+
+Default: hourly.
+
+### 5. Fulcra Recording Threshold
 
 ```text
 Do you want me to record earthquakes of 4.0 and above in your Fulcra datastore?
@@ -175,7 +189,7 @@ Interpretation:
 - `4.5`, `M4.5+`, `only 5+`, etc. → enable recording with that threshold.
 - Unclear response → ask one concise clarification.
 
-### 5. Discord Notification Threshold
+### 6. Discord Notification Threshold
 
 ```text
 Do you want Discord notifications for earthquakes of 5.0 and above?
@@ -188,21 +202,6 @@ Interpretation:
 - `yes` → notify for `M5.0+`.
 - `no` → disable Discord notifications.
 - Custom magnitude → notify with that threshold.
-
-### 6. Polling Frequency
-
-```text
-How often should I check USGS?
-
-1. Every 30 minutes
-2. Hourly — default
-3. Every 3 hours
-4. Every day
-
-Reply with a number, or write your own. You can always ask your agent to check USGS manually anytime if you need it sooner.
-```
-
-Default: hourly.
 
 ### 7. Discord Destination
 
