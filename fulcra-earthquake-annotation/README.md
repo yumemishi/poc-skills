@@ -5,7 +5,7 @@ Proof-of-concept AgentSkill for recording earthquake events as Fulcra moment ann
 ## Contents
 
 - `SKILL.md` — agent instructions for when and how to record earthquake events.
-- `annotation/earthquake.annotation.json` — reusable Fulcra annotation definition metadata.
+- `scripts/earthquake.annotation.json` — reusable Fulcra annotation definition metadata.
 - `fulcra-earthquake-annotation.skill` — packaged skill archive generated from this folder.
 
 ## Annotation

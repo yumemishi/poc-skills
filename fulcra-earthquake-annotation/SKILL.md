@@ -9,7 +9,7 @@ Record an earthquake as a Fulcra **Moment** annotation. This skill is for event 
 
 Load `fulcra-annotations` before writing. Use its bundled script rather than direct API calls.
 
-Bundled definition metadata is in `annotation/earthquake.annotation.json`; use it as the canonical field list when creating or reviewing the annotation definition.
+Bundled definition metadata is in `scripts/earthquake.annotation.json`; use it as the canonical field list when creating or reviewing the annotation definition.
 
 ## Annotation definition
 
