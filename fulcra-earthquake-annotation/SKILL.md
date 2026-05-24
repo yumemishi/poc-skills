@@ -1,0 +1,406 @@
+---
+name: fulcra-earthquake-annotation
+description: Use when setting up or running a Fulcra earthquake annotation workflow from USGS, including location-aware monitor setup, numeric magnitude records, the approved note format, duplicate suppression, and optional Discord notifications.
+version: 1.0.0
+author: Yumemishi / Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags: [fulcra, earthquake, annotation, usgs, location-aware, watchdog]
+    related_skills: [fulcra-annotations, fulcra-context, scheduled-alert-watchdogs]
+---
+
+# Fulcra Earthquake Annotation
+
+## Overview
+
+This skill defines the approved workflow for recording earthquakes as Fulcra numeric annotation records and optionally sending Discord notifications. It is based on the planning thread with Hosomichi and should preserve the exact Fulcra record shape described there.
+
+The primary value of each annotation record is the earthquake **magnitude**. The note attached to the record is a concise plain-text event note, not an article-style summary and not a schema dump.
+
+Canonical example:
+
+- **Annotation/data type:** `BI Earthquakes`
+- **Numeric value:** `5.96`
+- **Tags:** `earthquake`, `bi`, `hawaii`, `agent-recorded`, `hermemishi`
+- **Note:** local time, magnitude/intensity, epicenter, user/monitor distance, tsunami watch, and USGS page.
+
+Use this skill with Fulcra read/write access and a polling mechanism such as Hermes cron when automation is requested.
+
+## When to Use
+
+Use this skill when the user wants to:
+
+- Create or configure a Fulcra earthquake annotation.
+- Monitor USGS earthquakes around their Fulcra location or another place.
+- Record earthquakes into Fulcra as numeric magnitude values.
+- Use defaults of recording M4.0+ and notifying on M5.0+.
+- Preview the exact note that will be attached to each recorded annotation.
+- Build or maintain a recurring earthquake polling/notification watchdog.
+
+Do not use this skill for generic disaster alerts, weather alerts, or non-Fulcra logging unless the user explicitly asks to adapt the pattern.
+
+## Related Capabilities
+
+When executing the workflow, load/use the corresponding Fulcra and scheduling capabilities:
+
+- `fulcra-context` — current user location, local timezone, and place labels.
+- `fulcra-annotations` — create annotation definitions and write verified records.
+- `scheduled-alert-watchdogs` — recurring polling, duplicate suppression, and delivery targets.
+
+## Core Record Shape
+
+Create a **numeric** Fulcra annotation definition.
+
+| Field | Rule |
+| --- | --- |
+| Annotation name | User-approved label, e.g. `BI Earthquakes`, `Big Island Earthquakes`, `Southern California Earthquakes`, or `Nearby Earthquakes` |
+| Numeric value | Earthquake magnitude, e.g. `5.96` |
+| Recorded time | The USGS event time, not the time the agent writes the record |
+| Tags | Short lowercase tags such as `earthquake`, region tags, `agent-recorded`, and optionally `hermemishi` |
+| Duplicate guard | Stable USGS event ID / event page URL |
+| Note | The canonical plain-text note format below |
+
+## Canonical Fulcra Record Preview
+
+Preserve this shape exactly. Do not replace it with a title/body article, a generic summary, or `Fulcra fields:` metadata.
+
+```text
+Example Fulcra record:
+
+BI Earthquakes: 5.96
+
+Tags:
+earthquake, bi, hawaii, agent-recorded, hermemishi
+
+Note:
+Time: Friday, May 22, 9:46 PM HST
+Magnitude: 5.96, 7.2 max intensity
+Epicenter: 8.1 mi S of Honaunau-Napoopoo, Hawaii
+My distance from epicenter: ~17.8 mi, Honalo
+Tsunami watch: no
+
+USGS page: https://earthquake.usgs.gov/earthquakes/eventpage/hv74966427
+```
+
+## General Note Template
+
+```text
+Time: {weekday, month day, h:mm AM/PM timezone}
+Magnitude: {magnitude}{, {max_intensity} max intensity if available}
+Epicenter: {distance mi} {direction} of {nearest_town_or_place}
+My distance from epicenter: ~{distance_from_user_or_monitor_center} mi, {monitor_location_label}
+Tsunami watch: {yes/no/unknown}
+
+USGS page: {usgs_event_url}
+```
+
+If the monitor center is not the user's Fulcra location, use this distance label instead:
+
+```text
+Distance from monitored area: ~{distance_from_monitor_center} mi, {monitor_location_label}
+```
+
+## Note Rules
+
+- Use miles.
+- Use local time for the user or selected monitoring area.
+- Use nearest town/place and distance/direction.
+- Do **not** include raw coordinates in the annotation note or Discord alert.
+- Include maximum intensity when the source provides it; omit that phrase when unavailable.
+- Use `Tsunami watch: no`, `yes`, or `unknown` based on source confidence.
+- Include the USGS event page URL.
+- Keep the note plain text because Fulcra mobile renders notes as plain text.
+
+## Setup Flow
+
+Keep setup concise. Every numbered choice must allow free-form write-in text.
+
+### 1. Intro
+
+```text
+🌎 I’ll set up Fulcra earthquake annotations using the USGS earthquake feed.
+
+I’ll use your Fulcra location context to suggest a monitoring area. I won’t include raw coordinates in the records.
+```
+
+### 2. Monitoring Area
+
+Infer the current town/city and a sensible wider region from Fulcra context. Keep the list narrow:
+
+```text
+Based on your current Fulcra location, what area should I monitor?
+
+1. Nearby — 100 mi around {town/city}
+2. Wider region — 250 mi around {region}
+3. Use a different address or place
+4. Write in my own area/radius
+
+Reply with a number, or write your own.
+```
+
+Examples:
+
+```text
+1. Nearby — 100 mi around Honalo, Hawaiʻi
+2. Wider region — 250 mi around Hawaiʻi Island
+```
+
+```text
+1. Nearby — 100 mi around Los Angeles, CA
+2. Wider region — 250 mi around Southern California
+```
+
+If the user chooses a different address/place, geocode it, propose a radius, and ask for confirmation or a write-in radius.
+
+### 3. Annotation/Data Type Name
+
+```text
+Suggested annotation name:
+
+{Region} Earthquakes
+
+Reply yes to use this, or write your own.
+```
+
+Examples: `BI Earthquakes`, `Big Island Earthquakes`, `Southern California Earthquakes`, `Nearby Earthquakes`.
+
+### 4. Fulcra Recording Threshold
+
+```text
+Do you want me to record earthquakes of 4.0 and above in your Fulcra datastore?
+
+Reply yes, no, or write a different minimum magnitude.
+```
+
+Interpretation:
+
+- `yes` → record `M4.0+`.
+- `no` → disable Fulcra recording.
+- `4.5`, `M4.5+`, `only 5+`, etc. → enable recording with that threshold.
+- Unclear response → ask one concise clarification.
+
+### 5. Discord Notification Threshold
+
+```text
+Do you want Discord notifications for earthquakes of 5.0 and above?
+
+Reply yes, no, or write a different minimum magnitude.
+```
+
+Interpretation:
+
+- `yes` → notify for `M5.0+`.
+- `no` → disable Discord notifications.
+- Custom magnitude → notify with that threshold.
+
+### 6. Polling Frequency
+
+```text
+How often should I check USGS?
+
+1. Every 30 minutes
+2. Hourly — default
+3. Every 3 hours
+4. Every day
+
+Reply with a number, or write your own. You can always ask your agent to check USGS manually anytime if you need it sooner.
+```
+
+Default: hourly.
+
+### 7. Discord Destination
+
+Ask only if Discord notifications are enabled.
+
+```text
+Where should I send Discord notifications?
+
+1. This Discord thread/channel
+2. A different Discord channel
+3. A Discord DM
+4. Write in another destination
+
+Reply with a number, or write your own.
+```
+
+Resolve named Discord destinations with available messaging target tools where possible. Do not guess opaque channel IDs.
+
+### 8. Example Populated Fulcra Record
+
+Before final confirmation, show a populated Fulcra record preview using the selected settings and either a recent USGS event or clearly labeled synthetic/example data.
+
+```text
+Here’s an example of what I’d record:
+
+{Annotation name}: {magnitude}
+
+Tags:
+{tags}
+
+Note:
+Time: {local time}
+Magnitude: {magnitude}{, {max intensity} max intensity}
+Epicenter: {distance + direction} of {nearest town/place}
+My distance from epicenter: ~{distance} mi, {monitor location}
+Tsunami watch: {yes/no/unknown}
+
+USGS page: {event URL}
+```
+
+### 9. Final Confirmation
+
+```text
+Setup summary:
+- Area: {area label}, {radius} mi
+- Fulcra annotation: {name}
+- Record to Fulcra: {record threshold or disabled}
+- Discord notifications: {notify threshold or disabled}
+- Check frequency: {poll interval}
+- Notification destination: {destination or disabled}
+
+Reply yes to create this, or tell me what to change.
+```
+
+Do not create the annotation definition, cron job, or Discord delivery until the user confirms this summary.
+
+## USGS Event Data Requirements
+
+Use USGS as the default source. Required data for each candidate event:
+
+- Stable `id` and event page URL.
+- Event timestamp.
+- Magnitude.
+- Place string or nearest-town description.
+- Coordinates for internal distance calculations only.
+- Maximum intensity when available, such as `mmi` or `cdi`.
+- Tsunami/watch status when available; otherwise `unknown`.
+
+## Privacy and Location Rules
+
+- Use Fulcra location only with user consent and only for the requested annotation workflow.
+- Do not expose raw user coordinates.
+- Do not expose raw epicenter coordinates by default.
+- Use derived values in chat and notes: miles, nearest town/place, and broad labels.
+- If location samples are stale or uncertain, say so and use the selected monitor center rather than pretending it is the user's exact current location.
+
+## Recurring Watchdog Pattern
+
+For recurring monitoring, prefer a deterministic script-only cron job.
+
+1. Query USGS for events matching the chosen area and time window.
+2. Filter separately for Fulcra recording threshold and Discord notification threshold.
+3. Store seen USGS IDs in the agent/Hermes state directory, not in the skill source directory.
+4. Seed seen IDs silently on the first run unless the user explicitly wants historical backfill.
+5. For new events above the Fulcra threshold, record the numeric annotation with the event timestamp and canonical note.
+6. For new events above the Discord threshold, print/send one concise alert message.
+7. Empty stdout means no notification.
+8. Verify Fulcra writes by readback before claiming success.
+
+## Fulcra Write Pattern
+
+Before creating a definition, list existing definitions and reuse a matching one if present.
+
+Create the definition as numeric:
+
+```bash
+python3 skills/fulcra-annotations/scripts/fulcra_annotations.py create \
+  --type numeric \
+  --name "BI Earthquakes" \
+  --description "Earthquake magnitude records for the selected monitoring area" \
+  --tag earthquake \
+  --tag bi \
+  --tag hawaii \
+  --tag agent-recorded \
+  --tag hermemishi
+```
+
+Record an event using magnitude as `--value` and the event time as `--recorded-at`:
+
+```bash
+python3 skills/fulcra-annotations/scripts/fulcra_annotations.py record \
+  --name "BI Earthquakes" \
+  --value 5.96 \
+  --recorded-at "2026-05-23T07:46:00Z" \
+  --note "Time: Friday, May 22, 9:46 PM HST
+Magnitude: 5.96, 7.2 max intensity
+Epicenter: 8.1 mi S of Honaunau-Napoopoo, Hawaii
+My distance from epicenter: ~17.8 mi, Honalo
+Tsunami watch: no
+
+USGS page: https://earthquake.usgs.gov/earthquakes/eventpage/hv74966427" \
+  --tag earthquake \
+  --tag bi \
+  --tag hawaii \
+  --tag agent-recorded \
+  --tag hermemishi
+```
+
+Use dry-run first when developing, then verify readback after real writes.
+
+## Discord Notification Style
+
+Keep Discord notifications concise and aligned with the Fulcra note:
+
+```text
+🌎 M5.2 earthquake near Pāhala, Hawaiʻi
+Time: Friday, May 22, 9:46 PM HST
+Epicenter: 8.1 mi S of Pāhala, Hawaiʻi
+My distance from epicenter: ~42 mi, Honalo
+Tsunami watch: no
+USGS: https://earthquake.usgs.gov/earthquakes/eventpage/...
+```
+
+Do not include raw coordinates. If Discord-specific APIs are unavailable, use only the delivery targets actually exposed by the current runtime.
+
+## UI Schema Hints
+
+Future runtimes may render setup choices as buttons/select menus. Text fallback is mandatory.
+
+```yaml
+setup_options:
+  monitoring_area:
+    type: choice_with_write_in
+    render_as: buttons_or_select
+    options: [nearby, wider_region, different_address_or_place, write_in]
+  record_threshold:
+    type: yes_no_or_magnitude
+    default: M4.0+
+  notification_threshold:
+    type: yes_no_or_magnitude
+    default: M5.0+
+  poll_frequency:
+    type: choice_with_write_in
+    options: [30m, 1h_default, 3h, daily]
+  notification_destination:
+    type: choice_with_write_in
+    ask_if: notifications_enabled
+```
+
+## Common Pitfalls
+
+1. **Drifting into generic note text.** The record uses a numeric value plus the exact note fields above.
+2. **Inventing `Fulcra fields:` sections.** The user means the annotation record note, not a separate schema dump.
+3. **Asking too many monitor-area choices.** Keep it to nearby, wider region, different place, or write-in.
+4. **Double-confirming thresholds.** Ask once: `Reply yes, no, or write a different minimum magnitude.`
+5. **Showing raw coordinates.** Use miles, direction, and nearest town/place.
+6. **Recording at write time.** External events must use the USGS event timestamp.
+7. **Spamming backfill on first run.** Seed silently unless the user asks for historical records.
+8. **Claiming writes from HTTP status only.** Verify readback.
+9. **Assuming buttons are available.** Buttons are optional; text must always work.
+
+## Verification Checklist
+
+Before reporting the setup as complete:
+
+- [ ] User confirmed the final setup summary.
+- [ ] Annotation definition exists or was created as numeric.
+- [ ] Tags are short, lowercase, and stable.
+- [ ] Populated preview matches the canonical Fulcra record shape.
+- [ ] Fulcra threshold and Discord threshold are separate.
+- [ ] Event timestamps come from USGS.
+- [ ] No raw coordinates appear in notes or alerts.
+- [ ] Duplicate suppression uses stable USGS IDs.
+- [ ] Initial cron run behavior is silent seed or user-approved backfill.
+- [ ] Fulcra writes are verified by readback.
+- [ ] Discord destination is explicit when notifications are enabled.
