@@ -282,11 +282,39 @@ Follow these privacy-preserving actions.
 
 ## Recurring Watchdog Pattern
 
-For recurring monitoring, prefer a deterministic script-only cron job.
+For recurring monitoring, prefer a deterministic script-only cron job. This skill includes `scripts/usgs_earthquake_watch.py` for the repeatable parts: USGS querying, radius filtering, distance math, canonical note rendering, and duplicate suppression.
+
+Use the script in one of three modes:
+
+| Mode | Use for | Stdout behavior |
+| --- | --- | --- |
+| `discord` | Script-only cron notifications | Empty unless a new event meets the notification threshold |
+| `jsonl` | Fulcra write pipeline | One Fulcra-ready JSON object per new recordable event |
+| `both` | Manual testing/debugging | JSON records and Discord alerts |
+
+Example notification watchdog:
+
+```bash
+python3 fulcra-earthquake-annotation/scripts/usgs_earthquake_watch.py \
+  --center-lat "$MONITOR_LAT" \
+  --center-lon "$MONITOR_LON" \
+  --radius-mi 100 \
+  --monitor-label "Honalo" \
+  --annotation-name "BI Earthquakes" \
+  --tags earthquake,bi,hawaii,agent-recorded,yumemishi \
+  --record-min 4.0 \
+  --notify-min 5.0 \
+  --timezone Pacific/Honolulu \
+  --mode discord
+```
+
+For a first run, the script silently seeds seen USGS IDs unless `--backfill` is provided. Use `--dry-run` while testing.
+
+Operational rules:
 
 1. Query USGS for events matching the chosen area and time window.
 2. Filter separately for Fulcra recording threshold and Discord notification threshold.
-3. Store seen USGS IDs in the agent state directory, not in the skill source directory.
+3. Store seen USGS IDs in the agent state directory, not in the skill source directory. The script defaults to `~/.hermes/state/fulcra-earthquake-annotation/seen-usgs-events.json`.
 4. Seed seen IDs silently on the first run unless the user explicitly wants historical backfill.
 5. For new events above the Fulcra threshold, record the numeric annotation with the event timestamp and canonical note.
 6. For new events above the Discord threshold, print/send one concise alert message.
