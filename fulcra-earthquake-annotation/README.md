@@ -1,16 +1,16 @@
 # fulcra-earthquake-annotation
 
-Proof-of-concept skill for recording earthquake events as Fulcra number annotations.
+Proof-of-concept skill for recording earthquake magnitude as a Fulcra number annotation.
 
 ## Contents
 
 - `SKILL.md` — agent instructions for when and how to record earthquake events.
-- `scripts/earthquake.annotation.json` — reusable Fulcra annotation definition metadata.
+- `scripts/earthquake.annotation.json` — reusable Fulcra number annotation definition metadata.
 - `fulcra-earthquake-annotation.skill` — packaged skill archive generated from this folder.
 
 ## Annotation
 
-The skill creates or uses a Fulcra number annotation named `Earthquake` with tags for earthquake/environment/event context. It is intended for compact event breadcrumbs such as timestamp, magnitude, max intensity, depth, epicenter location, distance from epicenter, tsunami status, and USGS links.
+The skill creates or uses a Fulcra number/numeric annotation named `Earthquake`; the recorded value is the earthquake magnitude. Tags and notes carry earthquake/environment/event context such as origin time, depth, epicenter location, tsunami status, felt reports, and USGS links.
 
 ## Use
 

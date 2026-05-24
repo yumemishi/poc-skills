@@ -1,20 +1,22 @@
 {
   "name": "Earthquake",
-  "type": "moment",
-  "description": "An earthquake event relevant to the user, recorded with key seismic details and source links.",
+  "type": "numeric",
+  "value": "magnitude",
+  "description": "Earthquake magnitude for an event relevant to the user, recorded with key seismic details and source links.",
   "tags": [
     "earthquake",
     "environment",
-    "event"
+    "event",
+    "magnitude"
   ],
-  "record_note_schema": {
+  "record_schema": {
     "required": [
+      "magnitude_value",
       "event_time",
-      "magnitude",
       "location",
       "source"
     ],
-    "optional": [
+    "optional_note_fields": [
       "depth",
       "coordinates",
       "tsunami_status",
