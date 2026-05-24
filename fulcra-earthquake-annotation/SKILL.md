@@ -1,11 +1,11 @@
 ---
 name: fulcra-earthquake-annotation
-description: Record earthquake events as Fulcra numeric annotations. Use when a user wants to log an earthquake they felt, saw reported, or researched, including USGS-style details such as magnitude, event time, location, depth, tsunami status, felt reports, and source links. Depends on the `fulcra-annotations` skill for Fulcra writes.
+description: Record earthquake events near the user or a selected location as Fulcra number/numeric annotations. Use when a user wants to log an earthquake they felt, saw reported, or researched, including USGS-style details such as magnitude, event time, max intensity, depth, epicenter location, distance from the relevant location, tsunami status, and source links. Depends on the `fulcra-annotations` skill for Fulcra writes.
 ---
 
 # Fulcra Earthquake Annotation
 
-Record an earthquake as a Fulcra **Numeric** annotation where the value is earthquake magnitude. Keep source/event details in the note and tags.
+Record an earthquake as a Fulcra **number/numeric** annotation where the value is earthquake magnitude. Keep the note in the fixed structured field order below so records stay easy to scan and parse.
 
 Load `fulcra-annotations` before writing. Use its bundled script rather than direct API calls.
 
@@ -18,7 +18,7 @@ Create or reuse this definition:
 - **Name:** `Earthquake`
 - **Type:** `numeric`
 - **Value:** earthquake magnitude, e.g. `6.0`
-- **Description:** `Earthquake magnitude for an event relevant to the user, recorded with key seismic details and source links.`
+- **Description:** `Earthquake magnitude for an event near the user or selected location, recorded with structured seismic details and source links.`
 - **Definition tags:** `earthquake`, `environment`, `event`, `magnitude`
 
 Create if missing:
@@ -27,7 +27,7 @@ Create if missing:
 python3 skills/fulcra-annotations/scripts/fulcra_annotations.py create \
   --type numeric \
   --name "Earthquake" \
-  --description "Earthquake magnitude for an event relevant to the user, recorded with key seismic details and source links." \
+  --description "Earthquake magnitude for an event near the user or selected location, recorded with structured seismic details and source links." \
   --tag earthquake \
   --tag environment \
   --tag event \
@@ -46,32 +46,33 @@ Gather or infer from reliable sources:
 
 - magnitude as a number; this becomes `--value`
 - event time with timezone, preferably the earthquake origin time
-- location/epicenter
+- epicenter location
 - source link or source name
 
-If any required field is unknown, ask or record only after clearly marking it unknown in the note. Do not write without a numeric magnitude value.
+If any required field is unknown, ask or record only after clearly marking it `unknown` in the note. Do not write without a numeric magnitude value.
 
-## Optional note fields
+## Structured note fields
 
-Include when available:
+Use this exact field order. Use `unknown` for missing optional fields rather than deleting fields when consistency matters.
 
-- depth
-- coordinates
-- tsunami status
-- felt intensity / felt reports
-- aftershock note
-- related volcano or hazard note
-- USGS event ID
-- one or more source URLs
+1. `timestamp` — earthquake origin time with timezone
+2. `magnitude` — same number as `--value`, formatted as Mx.x
+3. `max_intensity` — reported maximum intensity, if available
+4. `depth` — include units
+5. `epicenter` — named location and/or coordinates
+6. `distance_from_location` — distance from the user/relevant selected location, if available
+7. `tsunami_status` — e.g. `none`, `no threat`, `advisory`, `warning`
+8. `source` — source name and URL
+9. `notes` — short extra context only, such as felt reports, aftershocks, volcano/hazard note, or USGS event ID
 
 ## Note format
 
-Keep notes compact and structured. Do not paste whole articles. Include the magnitude in the note for readability even though it is also the numeric value.
+Keep notes compact and structured. Do not paste whole articles. Use semicolon-separated `key: value` pairs in the fixed order.
 
 Suggested note:
 
 ```text
-M6.0 earthquake; origin 2026-05-22T21:46:00-10:00; location ~7 mi / 12 km S of Hōnaunau-Nāpōʻopoʻo, Hawaiʻi Island; depth ~14 mi / 22 km; no tsunami threat; widely felt across Hawaiʻi; source: USGS <url>.
+timestamp: 2026-05-22T21:46:00-10:00; magnitude: M6.0; max_intensity: unknown; depth: ~14 mi / 22 km; epicenter: ~7 mi / 12 km S of Hōnaunau-Nāpōʻopoʻo, Hawaiʻi Island; distance_from_location: unknown; tsunami_status: no tsunami threat; source: USGS https://www.usgs.gov/observatories/hvo/news/earthquake-information-statement; notes: widely felt across Hawaiʻi.
 ```
 
 ## Write workflow
@@ -99,7 +100,7 @@ python3 skills/fulcra-annotations/scripts/fulcra_annotations.py record \
   --name "Earthquake" \
   --value 6.0 \
   --recorded-at "2026-05-22T21:46:00-10:00" \
-  --note "M6.0 earthquake; location ~7 mi / 12 km S of Hōnaunau-Nāpōʻopoʻo, Hawaiʻi Island; depth ~14 mi / 22 km; no tsunami threat; widely felt across Hawaiʻi; source: USGS https://www.usgs.gov/observatories/hvo/news/earthquake-information-statement" \
+  --note "timestamp: 2026-05-22T21:46:00-10:00; magnitude: M6.0; max_intensity: unknown; depth: ~14 mi / 22 km; epicenter: ~7 mi / 12 km S of Hōnaunau-Nāpōʻopoʻo, Hawaiʻi Island; distance_from_location: unknown; tsunami_status: no tsunami threat; source: USGS https://www.usgs.gov/observatories/hvo/news/earthquake-information-statement; notes: widely felt across Hawaiʻi." \
   --tag earthquake \
   --tag usgs \
   --tag hawaii \

@@ -10,7 +10,7 @@ Proof-of-concept skill for recording earthquake magnitude as a Fulcra number ann
 
 ## Annotation
 
-The skill creates or uses a Fulcra number/numeric annotation named `Earthquake`; the recorded value is the earthquake magnitude. Tags and notes carry earthquake/environment/event context such as origin time, depth, epicenter location, tsunami status, felt reports, and USGS links.
+The skill creates or uses a Fulcra number/numeric annotation named `Earthquake`; the recorded value is the earthquake magnitude. The note uses a fixed structured field order: timestamp, magnitude, max intensity, depth, epicenter, distance from the relevant location, tsunami status, source, and notes.
 
 ## Use
 

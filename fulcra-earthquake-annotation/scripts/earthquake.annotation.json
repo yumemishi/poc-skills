@@ -2,7 +2,7 @@
   "name": "Earthquake",
   "type": "numeric",
   "value": "magnitude",
-  "description": "Earthquake magnitude for an event relevant to the user, recorded with key seismic details and source links.",
+  "description": "Earthquake magnitude for an event near the user or selected location, recorded with structured seismic details and source links.",
   "tags": [
     "earthquake",
     "environment",
@@ -12,19 +12,21 @@
   "record_schema": {
     "required": [
       "magnitude_value",
-      "event_time",
-      "location",
+      "timestamp",
+      "epicenter",
       "source"
     ],
-    "optional_note_fields": [
+    "note_format": "semicolon-separated key: value pairs",
+    "note_field_order": [
+      "timestamp",
+      "magnitude",
+      "max_intensity",
       "depth",
-      "coordinates",
+      "epicenter",
+      "distance_from_location",
       "tsunami_status",
-      "felt_reports",
-      "aftershock_note",
-      "related_hazard_note",
-      "usgs_event_id",
-      "source_urls"
+      "source",
+      "notes"
     ]
   }
 }
