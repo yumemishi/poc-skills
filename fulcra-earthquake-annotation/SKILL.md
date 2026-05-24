@@ -36,13 +36,13 @@ Use this skill when the user wants to:
 
 Do not use this skill for generic disaster alerts, weather alerts, or non-Fulcra logging unless the user explicitly asks to adapt the pattern.
 
-## Related Capabilities
+## External References
 
-When executing the workflow, load/use the corresponding Fulcra and scheduling capabilities:
+Keep implementation details in their own skills/repos instead of embedding them here. Reference only the external capabilities needed by this workflow:
 
-- `fulcra-context` — current user location, local timezone, and place labels.
-- `fulcra-annotations` — create annotation definitions and write verified records.
-- `scheduled-alert-watchdogs` — recurring polling, duplicate suppression, and delivery targets.
+- [`fulcra-context`](https://github.com/arc-claw-bot/fulcra-context) — current user location, local timezone, and place labels.
+- [`fulcra-annotations`](https://github.com/arc-claw-bot/fulcra-annotations-skill) — create annotation definitions and write verified records.
+- [`scheduled-alert-watchdogs`](https://github.com/schr3b3r/poc-skills) — recurring polling, duplicate suppression, and delivery-target pattern. Use the concrete scheduler/watchdog implementation from the consuming agent runtime.
 
 ## Core Record Shape
 
@@ -102,7 +102,6 @@ Distance from monitored area: ~{distance_from_monitor_center} mi, {monitor_locat
 - Use miles.
 - Use local time for the user or selected monitoring area.
 - Use nearest town/place and distance/direction.
-- Do **not** include raw coordinates in the annotation note or Discord alert.
 - Include maximum intensity when the source provides it; omit that phrase when unavailable.
 - Use `Tsunami watch: no`, `yes`, or `unknown` based on source confidence.
 - Include the USGS event page URL.
@@ -117,7 +116,7 @@ Keep setup concise. Every numbered choice must allow free-form write-in text.
 ```text
 🌎 I’ll set up Fulcra earthquake annotations using the USGS earthquake feed.
 
-I’ll use your Fulcra location context to suggest a monitoring area. I won’t include raw coordinates in the records.
+I’ll use your Fulcra location context to suggest a monitoring area.
 ```
 
 ### 2. Monitoring Area
@@ -268,16 +267,17 @@ Use USGS as the default source. Required data for each candidate event:
 - Event timestamp.
 - Magnitude.
 - Place string or nearest-town description.
-- Coordinates for internal distance calculations only.
 - Maximum intensity when available, such as `mmi` or `cdi`.
 - Tsunami/watch status when available; otherwise `unknown`.
 
-## Privacy and Location Rules
+## Privacy and Location Handling
 
-- Use Fulcra location only with user consent and only for the requested annotation workflow.
-- Do not expose raw user coordinates.
-- Do not expose raw epicenter coordinates by default.
-- Use derived values in chat and notes: miles, nearest town/place, and broad labels.
+Keep all privacy-preserving behavior in this section and avoid repeating it throughout the skill.
+
+- Use Fulcra location only with user consent and only for this earthquake annotation workflow.
+- Use coordinates internally only for distance/radius calculations and geocoding.
+- Do not expose raw user coordinates or raw epicenter coordinates in annotation notes, setup previews, or Discord alerts.
+- Use derived values instead: miles, direction, nearest town/place, monitor-area label, and broad region labels.
 - If location samples are stale or uncertain, say so and use the selected monitor center rather than pretending it is the user's exact current location.
 
 ## Recurring Watchdog Pattern
@@ -347,7 +347,7 @@ Tsunami watch: no
 USGS: https://earthquake.usgs.gov/earthquakes/eventpage/...
 ```
 
-Do not include raw coordinates. If Discord-specific APIs are unavailable, use only the delivery targets actually exposed by the current runtime.
+If Discord-specific APIs are unavailable, use only the delivery targets actually exposed by the current runtime.
 
 ## UI Schema Hints
 
@@ -379,7 +379,7 @@ setup_options:
 2. **Inventing `Fulcra fields:` sections.** The user means the annotation record note, not a separate schema dump.
 3. **Asking too many monitor-area choices.** Keep it to nearby, wider region, different place, or write-in.
 4. **Double-confirming thresholds.** Ask once: `Reply yes, no, or write a different minimum magnitude.`
-5. **Showing raw coordinates.** Use miles, direction, and nearest town/place.
+5. **Duplicating privacy rules throughout the skill.** Keep privacy/location constraints centralized in `Privacy and Location Handling`.
 6. **Recording at write time.** External events must use the USGS event timestamp.
 7. **Spamming backfill on first run.** Seed silently unless the user asks for historical records.
 8. **Claiming writes from HTTP status only.** Verify readback.
@@ -395,7 +395,7 @@ Before reporting the setup as complete:
 - [ ] Populated preview matches the canonical Fulcra record shape.
 - [ ] Fulcra threshold and Discord threshold are separate.
 - [ ] Event timestamps come from USGS.
-- [ ] No raw coordinates appear in notes or alerts.
+- [ ] Privacy and location handling rules are satisfied.
 - [ ] Duplicate suppression uses stable USGS IDs.
 - [ ] Initial cron run behavior is silent seed or user-approved backfill.
 - [ ] Fulcra writes are verified by readback.
