@@ -1,6 +1,6 @@
 # poc-skills
 
-Proof-of-concept AgentSkills for review.
+Proof-of-concept Fulcra skills.
 
 ## Skills
 
