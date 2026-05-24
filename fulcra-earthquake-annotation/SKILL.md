@@ -2,7 +2,7 @@
 name: fulcra-earthquake-annotation
 description: Use when setting up or running a Fulcra earthquake annotation workflow from USGS, including location-aware monitor setup, numeric magnitude records, the approved note format, duplicate suppression, and optional Discord notifications.
 version: 1.0.0
-author: Yumemishi/Hermemishi
+author: Yumemishi/Hermemishi/DianaKusunoki
 license: MIT
 ---
 
