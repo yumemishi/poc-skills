@@ -2,8 +2,6 @@
 
 Proof-of-concept AgentSkills for review.
 
-## Included skills
+## Skills
 
-- `fulcra-earthquake-annotation/` — records earthquake events as Fulcra moment annotations using the `fulcra-annotations` skill.
-
-Each skill lives in its own folder with its script/definition metadata, README, `SKILL.md`, and packaged `.skill` archive.
+- [fulcra-earthquake-annotation](fulcra-earthquake-annotation/) — Record earthquake events as Fulcra moment annotations.
