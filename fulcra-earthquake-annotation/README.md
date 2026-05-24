@@ -1,6 +1,6 @@
 # fulcra-earthquake-annotation
 
-Proof-of-concept AgentSkill for recording earthquake events as Fulcra moment annotations.
+Proof-of-concept skill for recording earthquake events as Fulcra number annotations.
 
 ## Contents
 
@@ -10,7 +10,7 @@ Proof-of-concept AgentSkill for recording earthquake events as Fulcra moment ann
 
 ## Annotation
 
-The skill creates or reuses a Fulcra moment annotation named `Earthquake` with tags for earthquake/environment/event context. It is intended for compact event breadcrumbs such as magnitude, origin time, location, depth, tsunami status, felt reports, and source links.
+The skill creates or uses a Fulcra number annotation named `Earthquake` with tags for earthquake/environment/event context. It is intended for compact event breadcrumbs such as timestamp, magnitude, max intensity, depth, epicenter location, distance from epicenter, tsunami status, and USGS links.
 
 ## Use
 
