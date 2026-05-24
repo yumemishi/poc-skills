@@ -1,0 +1,28 @@
+{
+  "name": "Earthquake",
+  "type": "moment",
+  "description": "An earthquake event relevant to the user, recorded with key seismic details and source links.",
+  "tags": [
+    "earthquake",
+    "environment",
+    "event"
+  ],
+  "record_note_schema": {
+    "required": [
+      "event_time",
+      "magnitude",
+      "location",
+      "source"
+    ],
+    "optional": [
+      "depth",
+      "coordinates",
+      "tsunami_status",
+      "felt_reports",
+      "aftershock_note",
+      "related_hazard_note",
+      "usgs_event_id",
+      "source_urls"
+    ]
+  }
+}
