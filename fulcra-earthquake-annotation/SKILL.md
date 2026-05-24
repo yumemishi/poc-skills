@@ -376,11 +376,10 @@ setup_options:
 ## Common Pitfalls
 
 1. **Drifting into generic note text.** The record uses a numeric value plus the exact note fields above.
-2. **Inventing `Fulcra fields:` sections.** The user means the annotation record note, not a separate schema dump.
-3. **Asking too many monitor-area choices.** Keep it to nearby, wider region, different place, or write-in.
-4. **Recording at write time.** External events must use the USGS event timestamp.
-5. **Claiming writes from HTTP status only.** Verify readback.
-6. **Assuming buttons are available.** Buttons are optional; text must always work.
+2. **Asking too many monitor-area choices.** Keep it to nearby, wider region, different place, or write-in.
+3. **Recording at write time.** External events must use the USGS event timestamp.
+4. **Claiming writes from HTTP status only.** Verify readback.
+5. **Assuming buttons are available.** Buttons are optional; text must always work.
 
 ## Verification Checklist
 
