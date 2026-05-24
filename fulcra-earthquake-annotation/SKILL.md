@@ -2,30 +2,26 @@
 name: fulcra-earthquake-annotation
 description: Use when setting up or running a Fulcra earthquake annotation workflow from USGS, including location-aware monitor setup, numeric magnitude records, the approved note format, duplicate suppression, and optional Discord notifications.
 version: 1.0.0
-author: Yumemishi / Hermes Agent
+author: Yumemishi/Hermemishi
 license: MIT
-metadata:
-  hermes:
-    tags: [fulcra, earthquake, annotation, usgs, location-aware, watchdog]
-    related_skills: [fulcra-annotations, fulcra-context, scheduled-alert-watchdogs]
 ---
 
 # Fulcra Earthquake Annotation
 
 ## Overview
 
-This skill defines the approved workflow for recording earthquakes as Fulcra numeric annotation records and optionally sending Discord notifications. It is based on the planning thread with Hosomichi and should preserve the exact Fulcra record shape described there.
+This skill defines how to record earthquakes as Fulcra numeric annotation records and optionally sending Discord notifications.
 
-The primary value of each annotation record is the earthquake **magnitude**. The note attached to the record is a concise plain-text event note, not an article-style summary and not a schema dump.
+The primary value of each annotation record is the earthquake magnitude. Note attached to the record includes timestamp, magnitude/max intensity, epicenter, my distance from epicenter, tsunami watch, and USGS page.
 
 Canonical example:
 
 - **Annotation/data type:** `BI Earthquakes`
 - **Numeric value:** `5.96`
-- **Tags:** `earthquake`, `bi`, `hawaii`, `agent-recorded`, `hermemishi`
+- **Tags:** `earthquake`, `bi`, `hawaii`, `agent-recorded`, `yumemishi`
 - **Note:** local time, magnitude/intensity, epicenter, user/monitor distance, tsunami watch, and USGS page.
 
-Use this skill with Fulcra read/write access and a polling mechanism such as Hermes cron when automation is requested.
+Use this skill with Fulcra read/write access and a scheduler or cron-style polling mechanism when automation is requested.
 
 ## When to Use
 
@@ -57,7 +53,7 @@ Create a **numeric** Fulcra annotation definition.
 | Annotation name | User-approved label, e.g. `BI Earthquakes`, `Big Island Earthquakes`, `Southern California Earthquakes`, or `Nearby Earthquakes` |
 | Numeric value | Earthquake magnitude, e.g. `5.96` |
 | Recorded time | The USGS event time, not the time the agent writes the record |
-| Tags | Short lowercase tags such as `earthquake`, region tags, `agent-recorded`, and optionally `hermemishi` |
+| Tags | Short lowercase tags such as `earthquake`, region tags, `agent-recorded`, and optionally `yumemishi` |
 | Duplicate guard | Stable USGS event ID / event page URL |
 | Note | The canonical plain-text note format below |
 
@@ -71,7 +67,7 @@ Example Fulcra record:
 BI Earthquakes: 5.96
 
 Tags:
-earthquake, bi, hawaii, agent-recorded, hermemishi
+earthquake, bi, hawaii, agent-recorded, yumemishi
 
 Note:
 Time: Friday, May 22, 9:46 PM HST
@@ -290,7 +286,7 @@ For recurring monitoring, prefer a deterministic script-only cron job.
 
 1. Query USGS for events matching the chosen area and time window.
 2. Filter separately for Fulcra recording threshold and Discord notification threshold.
-3. Store seen USGS IDs in the agent/Hermes state directory, not in the skill source directory.
+3. Store seen USGS IDs in the agent state directory, not in the skill source directory.
 4. Seed seen IDs silently on the first run unless the user explicitly wants historical backfill.
 5. For new events above the Fulcra threshold, record the numeric annotation with the event timestamp and canonical note.
 6. For new events above the Discord threshold, print/send one concise alert message.
@@ -312,7 +308,7 @@ python3 skills/fulcra-annotations/scripts/fulcra_annotations.py create \
   --tag bi \
   --tag hawaii \
   --tag agent-recorded \
-  --tag hermemishi
+  --tag yumemishi
 ```
 
 Record an event using magnitude as `--value` and the event time as `--recorded-at`:
@@ -333,7 +329,7 @@ USGS page: https://earthquake.usgs.gov/earthquakes/eventpage/hv74966427" \
   --tag bi \
   --tag hawaii \
   --tag agent-recorded \
-  --tag hermemishi
+  --tag yumemishi
 ```
 
 Use dry-run first when developing, then verify readback after real writes.
