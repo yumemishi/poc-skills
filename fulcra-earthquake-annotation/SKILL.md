@@ -272,11 +272,11 @@ Use USGS as the default source. Required data for each candidate event:
 
 ## Privacy and Location Handling
 
-Keep all privacy-preserving behavior in this section and avoid repeating it throughout the skill.
+Follow these privacy-preserving actions.
 
-- Use Fulcra location only with user consent and only for this earthquake annotation workflow.
+- Use Fulcra location only with user consent.
 - Use coordinates internally only for distance/radius calculations and geocoding.
-- Do not expose raw user coordinates or raw epicenter coordinates in annotation notes, setup previews, or Discord alerts.
+- Do not expose raw user coordinates in annotation notes, setup previews, or Discord alerts.
 - Use derived values instead: miles, direction, nearest town/place, monitor-area label, and broad region labels.
 - If location samples are stale or uncertain, say so and use the selected monitor center rather than pretending it is the user's exact current location.
 
@@ -339,7 +339,7 @@ Use dry-run first when developing, then verify readback after real writes.
 Keep Discord notifications concise and aligned with the Fulcra note:
 
 ```text
-🌎 M5.2 earthquake near Pāhala, Hawaiʻi
+🌎 Magnitude 5.2 earthquake near Pāhala, Hawaiʻi
 Time: Friday, May 22, 9:46 PM HST
 Epicenter: 8.1 mi S of Pāhala, Hawaiʻi
 My distance from epicenter: ~42 mi, Honalo
@@ -378,12 +378,9 @@ setup_options:
 1. **Drifting into generic note text.** The record uses a numeric value plus the exact note fields above.
 2. **Inventing `Fulcra fields:` sections.** The user means the annotation record note, not a separate schema dump.
 3. **Asking too many monitor-area choices.** Keep it to nearby, wider region, different place, or write-in.
-4. **Double-confirming thresholds.** Ask once: `Reply yes, no, or write a different minimum magnitude.`
-5. **Duplicating privacy rules throughout the skill.** Keep privacy/location constraints centralized in `Privacy and Location Handling`.
-6. **Recording at write time.** External events must use the USGS event timestamp.
-7. **Spamming backfill on first run.** Seed silently unless the user asks for historical records.
-8. **Claiming writes from HTTP status only.** Verify readback.
-9. **Assuming buttons are available.** Buttons are optional; text must always work.
+4. **Recording at write time.** External events must use the USGS event timestamp.
+5. **Claiming writes from HTTP status only.** Verify readback.
+6. **Assuming buttons are available.** Buttons are optional; text must always work.
 
 ## Verification Checklist
 
