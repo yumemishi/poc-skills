@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 import unittest
 from argparse import Namespace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
 from fulcra_earthquake_annotation import watch
 
 
-ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
 
 

@@ -34,8 +34,9 @@ fulcra-earthquake-annotation/
   references/setup-flow.md         User-facing setup prompts
   references/output-contract.md    Fulcra writer and notification contract
   scripts/usgs_earthquake_watch.py Deterministic USGS polling helper
-fulcra_earthquake_annotation/
-  watch.py                         Importable watchdog implementation
+src/
+  fulcra_earthquake_annotation/
+    watch.py                       Importable watchdog implementation
 tests/
   fixtures/
   test_usgs_earthquake_watch.py

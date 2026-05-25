@@ -17,7 +17,7 @@ jobs:
       - name: Compile Python
         run: |
           python -m py_compile \
-            fulcra_earthquake_annotation/watch.py \
+            src/fulcra_earthquake_annotation/watch.py \
             fulcra-earthquake-annotation/scripts/usgs_earthquake_watch.py \
             tests/test_usgs_earthquake_watch.py
 
