@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fulcra Earthquake Annotation Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["center_lat", "center_lon", "radius_mi", "monitor_label"],
+  "properties": {
+    "center_lat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "center_lon": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "radius_mi": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "monitor_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "annotation_name": {
+      "type": "string",
+      "default": "Nearby Earthquakes"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": ["earthquake", "agent-recorded"]
+    },
+    "record_min": {
+      "type": "number",
+      "minimum": 0,
+      "default": 4.0
+    },
+    "notify_min": {
+      "type": "number",
+      "minimum": 0,
+      "default": 5.0
+    },
+    "since_hours": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 2.0
+    },
+    "timezone": {
+      "type": "string",
+      "default": "UTC"
+    },
+    "state_file": {
+      "type": "string"
+    },
+    "state_retention_days": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 90
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "enum": ["fulcra_record", "discord_alert"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["fulcra_record", "discord_alert"]
+    }
+  }
+}
